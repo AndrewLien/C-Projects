@@ -1,0 +1,14 @@
+Andrew Lien
+The work in its entirety is all mine along with inspiration of 
+how to approach the Graph via LSS tutoring. Useful functions 
+were inspired in the form of ideas using these tutoring services.
+Graph.c
+Graph.h
+List.c
+List.h
+GraphTest.c
+ListTest.c
+FindComponents.c
+Makefile
+README
+Note to grader: Use diff -b to ignore trailing spaces (which i can't seem to get rid of) 
