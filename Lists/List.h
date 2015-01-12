@@ -1,9 +1,12 @@
-
+/*andrew lien 
+ * pa4
+ * Patrick Tantalo
+ * CS101
+ * List.h
+ */
 #ifndef __LIST_H__
 #define __LIST_H__
-
 #include <stdbool.h>
-
 typedef struct ListObj* List;
 
 List newList(void);
@@ -17,8 +20,9 @@ void freeList(List*);
 bool isEmpty(List);
 
 int length(List);
-
+int getFront(List);
 int getIndex(List);
+int offEnd(List);
 
 int front(List);
 
@@ -29,10 +33,11 @@ int getElement(List);
 int equals(List, List);
 
 // Manipulation procedures
-
+void makeEmpty(List);
 void movePrev(List);
 
 void moveNext(List);
+void moveFront(List);
 
 void moveTo(List, int);
 

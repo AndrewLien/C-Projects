@@ -1,4 +1,7 @@
-
+//Andrew Lien
+//Pa4
+//List.c
+//CMPS 101 Patrick Tantalo
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -56,10 +59,16 @@ int length(List L){
 int getIndex(List L){
   if(L->length == 0){
     fprintf(stderr, "List is empty, function cannot proceed\n");
-
     exit(1);
   }
   return L->currentPosition;
+}
+int offEnd(List L) {
+	if ( L == NULL ) {
+		printf("List Error: calling offEnd() on NULL ListRef\n");
+		exit(1);
+	}
+	return (L->curr == NULL);
 }
 
 int front(List L){
@@ -77,7 +86,17 @@ int back(List L){
   }
   return L->back->data;
 }
-
+int getFront(List L) {
+	if ( L == NULL ) {
+		printf("List Error: calling getFront() on NULL ListRef\n");
+		exit(1);
+	}
+	if ( isEmpty(L) ) {
+		//printf("List Error: calling getFront() on an empty List\n");
+	    return 0;
+	}
+	return (L->front->data);
+}
 
 int getElement(List L){
   if(L->length == 0){
@@ -104,6 +123,18 @@ int equals(List A, List B){
 }
 
 // Manipulation procedures ----------------------------------------------------
+void makeEmpty(List L) {
+	if ( L == NULL ) {
+		printf("List Error: calling makeEmpty() on NULL ListRef\n");
+		exit(1);
+	}
+	if ( L->front == NULL) {
+		return;
+	}
+	while( !isEmpty(L) ) {
+		deleteFront(L);
+	}
+}
 void clear(List L){
   node* tmporary;
   L->curr = L->front;
@@ -149,14 +180,30 @@ void moveTo(List L, int i){
 
 void movePrev(List L){
   if(L->currentPosition > 0 && L->currentPosition < L->length){
+//  printf("If statement\n");
     --L->currentPosition;
     L->curr = L->curr->prev;
   }else{
+//  printf("ELse statement\n");
     L->currentPosition = -1;
     L->curr = NULL;
   }
 }
 
+void moveFront(List L) {
+	if ( L == NULL ) {
+		printf("List Error: calling moveFront() on NULL ListRef\n");
+		exit(1);
+	}
+	if ( isEmpty(L) ) {
+		//printf("List Error: calling moveFront() on an empty List\n");
+		//exit(1);
+		L->currentPosition = 0;
+		return;
+	}
+	L->curr = L->front;
+	L->currentPosition = 0;
+}
 void moveNext(List L){
   if(L->currentPosition >= 0 && L->currentPosition < L->length - 1){
     ++L->currentPosition;
@@ -169,6 +216,7 @@ void moveNext(List L){
 
 
 void prepend(List L, int data){
+
   ++L->length;
   node* n = malloc(sizeof(struct node));
   n->data = data;
@@ -178,6 +226,7 @@ void prepend(List L, int data){
   else L->front->prev = n;
   if(L->currentPosition > -1) ++L->currentPosition;
   L->front = n;
+  printf("The state of the current position is %d\n", L->currentPosition);
 }
 
 void append(List L, int data){
@@ -201,14 +250,35 @@ void insertBefore(List L, int data){
     exit(1);
   }
   node* n = malloc(sizeof(struct node));
+  
   assert(n!=NULL);
   n->data = data;
   n->next = L->curr;
   n->prev = L->curr->prev;
-  if(L->currentPosition == 0) L->front = n;
-  else n->prev->next = n;
+  L->curr->prev = n;
+  if(L->currentPosition == 0){ L->front = n; }
+  else{ 
+  assert(n->prev != NULL);
+    // n->prev->next = n; 
+    n->prev->next = n;
+    }
+  
   ++L->length;
-  if(L->currentPosition > -1) ++L->currentPosition;
+  ++L->currentPosition;
+ // if(L->currentPosition > -1) ++L->currentPosition;
+ /*
+ 	if ( L->curr->prev == NULL ) {
+		N->next = L->front;
+		L->front->prev = N;
+		L->front = N;
+	}else {
+		N->prev = L->curr->prev;
+		N->next = L->curr;
+		L->curr->prev->next = N;
+		L->curr->prev = N;
+		printf("N->data : %d\n", N->data);
+	}
+	++(L->length);*/
 }
 
 void insertAfter(List L, int data){
@@ -237,12 +307,21 @@ void deleteFront(List L){
   }
   if(L->currentPosition > -1) --L->currentPosition;
   if(L->curr == L->front) L->curr = NULL;
+//  printf("pass 1\n");
+  node* tmporary = L->front;
+ // L->front = L->front->next;
+  //  printf("pass 2\n");
+//  node* tmporary = L->front->prev;
+  //  printf("pass 3\n");
+  if(L->length > 1){
   L->front = L->front->next;
-  node* tmporary = L->front->prev;
   L->front->prev = NULL;
-  --L->length;
+  }
+  //  printf("pass 4\n");
+    --L->length;
   if(L->length == 0) L->back = NULL;
   free(tmporary);
+  //  printf("pass 5\n");
 }
 
 void deleteBack(List L){
@@ -287,8 +366,15 @@ void delete(List L){
 
 // Other operations -----------------------------------------------------------
 void printList(FILE* out, List L){
+	if ( L == NULL ) {
+		printf("List Error: calling printList() on NULL List\n");
+		exit(1);
+	}
+//printf("L->front->data is %d", L->front->data);
   for(node* tmporary = L->front; tmporary != NULL; tmporary = tmporary->next){
     fprintf(out, "%d ", tmporary->data);
+  //  printf("Current index: %d \n", L->currentPosition);
+
   }
 }
 
